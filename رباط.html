@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مبيان مناخي - الرباط</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 20px 0;
+        }
+        .container {
+            width: 900px;
+            max-width: 95%;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            direction: rtl; /* لجعل المحتوى يبدأ من اليمين لليسار */
+            text-align: right; /* لمحاذاة النص لليمين */
+        }
+        h2, h3 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .chart-section {
+            margin-bottom: 40px;
+        }
+        .data-table, .scale-info, .range-info {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+        }
+        .data-table th {
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: bold;
+        }
+        .data-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .scale-info p, .range-info p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #495057;
+        }
+        .scale-info span, .range-info span {
+            font-weight: bold;
+            color: #007bff;
+        }
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px 0;
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                width: 100%;
+            }
+            h2, h3 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+            .chart-section {
+                margin-bottom: 25px;
+            }
+            .chart-section canvas {
+                max-height: 250px !important;
+            }
+            .data-table, .scale-info, .range-info {
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            .data-table {
+                overflow-x: auto;
+                display: block;
+            }
+            .data-table table {
+                width: 100%;
+                min-width: 300px;
+            }
+            .data-table th, .data-table td {
+                padding: 8px;
+                font-size: 13px;
+            }
+            .scale-info p, .range-info p {
+                font-size: 14px;
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                margin: 5px 0;
+                padding: 5px;
+            }
+            .container {
+                padding: 15px;
+            }
+            h2, h3 {
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+            .chart-section canvas {
+                max-height: 200px !important;
+            }
+            .data-table {
+                overflow-x: auto;
+                display: block;
+            }
+            .data-table table {
+                width: 100%;
+                min-width: 280px;
+            }
+            .data-table th, .data-table td {
+                padding: 6px;
+                font-size: 12px;
+            }
+            .scale-info p, .range-info p {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>المبيان المناخي لمدينة الرباط</h2>
+
+        <div class="chart-section">
+            <canvas id="climographChart"></canvas>
+        </div>
+
+        <div class="data-table">
+            <h3>جدول المعطيات المناخية لمدينة الرباط</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>الشهر</th>
+                        <th>متوسط الحرارة (°م)</th>
+                        <th>متوسط التساقطات (مم)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>يناير</td><td>12.6</td><td>78</td></tr>
+                    <tr><td>فبراير</td><td>13.4</td><td>65</td></tr>
+                    <tr><td>مارس</td><td>14.8</td><td>52</td></tr>
+                    <tr><td>أبريل</td><td>16.1</td><td>42</td></tr>
+                    <tr><td>مايو</td><td>18.4</td><td>21</td></tr>
+                    <tr><td>يونيو</td><td>21.0</td><td>6</td></tr>
+                    <tr><td>يوليو</td><td>23.1</td><td>1</td></tr>
+                    <tr><td>غشت</td><td>23.5</td><td>1</td></tr>
+                    <tr><td>شتنبر</td><td>22.0</td><td>7</td></tr>
+                    <tr><td>أكتوبر</td><td>19.3</td><td>45</td></tr>
+                    <tr><td>نونبر</td><td>15.8</td><td>80</td></tr>
+                    <tr><td>دجنبر</td><td>13.5</td><td>88</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="scale-info">
+            <h3>مقياس المبيان</h3>
+            <p>لتمثيل صحيح للمناخ وتحديد فترة الجفاف، نستخدم القاعدة الذهبية: <span>P = 2T</span>.</p>
+            <ul>
+                <li><span>المحور الأيسر (التساقطات):</span> 1 سم يمثل 20 مم.</li>
+                <li><span>المحور الأيمن (الحرارة):</span> 1 سم يمثل 10 درجة مئوية.</li>
+            </ul>
+            <p>بهذا المقياس، عندما يكون منحنى الحرارة <span>(الخط الأحمر)</span> فوق أعمدة التساقطات <span>(الأعمدة الزرقاء)</span>، فهذا يشير إلى فترة جفاف.</p>
+        </div>
+
+        <div class="range-info">
+            <h3>المدى الحراري السنوي</h3>
+            <p>
+                <span>المدى الحراري = أعلى درجة حرارة سنوية - أدنى درجة حرارة سنوية</span>
+            </p>
+            <p>
+                أدنى درجة حرارة: <span id="minTemp"></span> درجة مئوية <br>
+                أعلى درجة حرارة: <span id="maxTemp"></span> درجة مئوية <br>
+                المدى الحراري السنوي لمدينة الرباط هو: <span id="tempRange"></span> درجة مئوية
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        // المعطيات ديال الرباط
+        const labels = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'غشت', 'شتنبر', 'أكتوبر', 'نونبر', 'دجنبر'];
+        const precipitation = [78, 65, 52, 42, 21, 6, 1, 1, 7, 45, 80, 88]; // التساقطات (مم)
+        const temperature = [12.6, 13.4, 14.8, 16.1, 18.4, 21.0, 23.1, 23.5, 22.0, 19.3, 15.8, 13.5]; // الحرارة (°م)
+
+        // حساب المدى الحراري
+        const minTemp = Math.min(...temperature);
+        const maxTemp = Math.max(...temperature);
+        const tempRange = (maxTemp - minTemp).toFixed(1); // تقريب لكسر عشري واحد
+
+        // عرض المدى الحراري في الصفحة
+        document.getElementById('minTemp').textContent = minTemp;
+        document.getElementById('maxTemp').textContent = maxTemp;
+        document.getElementById('tempRange').textContent = tempRange;
+
+        // جلب العنصر canvas
+        const ctx = document.getElementById('climographChart').getContext('2d');
+
+        // إنشاء المبيان
+        const climographChart = new Chart(ctx, {
+            type: 'bar', // النوع الأساسي هو أعمدة (للتساقطات)
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        // بيانات التساقطات (أعمدة زرقاء)
+                        type: 'bar',
+                        label: 'التساقطات (مم)',
+                        data: precipitation,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)', // أزرق
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                        yAxisID: 'yPrecip', // الربط بالمحور الأيسر
+                    },
+                    {
+                        // بيانات الحرارة (خط أحمر)
+                        type: 'line',
+                        label: 'الحرارة (°م)',
+                        data: temperature,
+                        backgroundColor: 'rgba(255, 99, 132, 0.4)', // أحمر
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        fill: false, // باش ميتعمرش اللون تحت الخط
+                        tension: 0.3, // باش يكون الخط أملس
+                        yAxisID: 'yTemp', // الربط بالمحور الأيمن
+                        pointRadius: 5, // حجم النقط
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                        pointBorderColor: '#fff'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                resizeDelay: 0,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'المبيان المناخي لمدينة الرباط',
+                        font: {
+                            size: 20,
+                            family: 'Segoe UI',
+                            weight: 'bold'
+                        },
+                        color: '#0056b3'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        rtl: true // دعم RTL للأدوات المنبثقة
+                    },
+                    legend: {
+                        labels: {
+                            font: { size: 14 }
+                        },
+                        rtl: true
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'الشهور',
+                            font: { size: 14 }
+                        },
+                        ticks: {
+                            font: { size: 12 }
+                        },
+                        grid: {
+                            display: false // إزالة الخطوط الأفقية من المحور X
+                        }
+                    },
+                    yPrecip: {
+                        type: 'linear',
+                        position: 'right', // وضع التساقطات على اليمين (عادة اليسار لكن للRTL)
+                        title: {
+                            display: true,
+                            text: 'التساقطات (مم)',
+                            color: 'rgba(54, 162, 235, 1)',
+                            font: { size: 14 }
+                        },
+                        ticks: {
+                            callback: function(value) { return value + ' مم'; },
+                            font: { size: 12 }
+                        },
+                        min: 0,
+                        max: 100, // حد أقصى للتساقطات (يمكن تعديله حسب البيانات)
+                        grid: {
+                            drawOnChartArea: true,
+                            color: '#e9ecef'
+                        }
+                    },
+                    yTemp: {
+                        type: 'linear',
+                        position: 'left', // وضع الحرارة على اليسار (مع RTL أفضل)
+                        title: {
+                            display: true,
+                            text: 'الحرارة (°م)',
+                            color: 'rgba(255, 99, 132, 1)',
+                            font: { size: 14 }
+                        },
+                        ticks: {
+                            callback: function(value) { return value + '°م'; },
+                            font: { size: 12 }
+                        },
+                        min: 0,
+                        max: 50, // حد أقصى للحرارة (نصف الـ max ديال التساقطات: 100/2 = 50)
+                        grid: {
+                            drawOnChartArea: false, // باش ميتخلطوش الخطوط ديال الحرارة مع التساقطات
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

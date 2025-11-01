@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مبيان مناخي - فاس</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 20px 0;
+        }
+        .container {
+            width: 900px;
+            max-width: 95%;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            direction: rtl; 
+            text-align: right;
+        }
+
+        h2, h3 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .chart-section {
+            margin-bottom: 40px;
+        }
+        .data-table, .scale-info, .range-info {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+        }
+        .data-table th {
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: bold;
+        }
+        .data-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .scale-info p, .range-info p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #495057;
+        }
+        .scale-info span, .range-info span {
+            font-weight: bold;
+            color: #007bff;
+        }
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px 0;
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                width: 100%;
+            }
+            h2, h3 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+            .chart-section {
+                margin-bottom: 25px;
+            }
+            .chart-section canvas {
+                max-height: 250px !important;
+            }
+            .data-table, .scale-info, .range-info {
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            .data-table {
+                overflow-x: auto;
+                display: block;
+            }
+            .data-table table {
+                width: 100%;
+                min-width: 300px;
+            }
+            .data-table th, .data-table td {
+                padding: 8px;
+                font-size: 13px;
+            }
+            .scale-info p, .range-info p {
+                font-size: 14px;
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                margin: 5px 0;
+                padding: 5px;
+            }
+            .container {
+                padding: 15px;
+            }
+            h2, h3 {
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+            .chart-section canvas {
+                max-height: 200px !important;
+            }
+            .data-table {
+                overflow-x: auto;
+                display: block;
+            }
+            .data-table table {
+                width: 100%;
+                min-width: 280px;
+            }
+            .data-table th, .data-table td {
+                padding: 6px;
+                font-size: 12px;
+            }
+            .scale-info p, .range-info p {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h2>المبيان المناخي لمدينة فاس</h2>
+
+        <div class="chart-section">
+            <canvas id="climographChart"></canvas>
+        </div>
+
+        <div class="data-table">
+            <h3>جدول المعطيات المناخية لمدينة فاس</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>الشهر</th>
+                        <th>متوسط الحرارة (°م)</th>
+                        <th>متوسط التساقطات (مم)</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTableBody">
+                    </tbody>
+            </table>
+        </div>
+
+        <div class="scale-info">
+            <h3>مقياس المبيان</h3>
+            <p>لتمثيل صحيح للمناخ وتحديد فترة الجفاف، نستخدم القاعدة الذهبية: <span>P = 2T</span>.</p>
+            <ul>
+                <li><span>المحور الأيسر (التساقطات):</span> مقياس (مم)</li>
+                <li><span>المحور الأيمن (الحرارة):</span> مقياس (°م)</li>
+            </ul>
+        </div>
+
+        <div class="range-info">
+            <h3>المدى الحراري السنوي (فاس)</h3>
+            <p>
+                <span>المدى الحراري = أعلى درجة حرارة سنوية - أدنى درجة حرارة سنوية</span>
+            </p>
+            <p>
+                أدنى درجة حرارة: <span id="minTemp"></span> درجة مئوية <br>
+                أعلى درجة حرارة: <span id="maxTemp"></span> درجة مئوية <br>
+                المدى الحراري السنوي هو: <span id="tempRange"></span> درجة مئوية
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        // معطيات مدينة فاس (مناخ متوسطي قاري)
+        const cityName = "فاس";
+        const precipitation = [65, 75, 70, 68, 40, 16, 2, 3, 13, 45, 71, 71];
+        const temperature = [10.0, 11.1, 13.3, 15.0, 18.3, 22.8, 26.7, 26.7, 23.3, 19.4, 14.4, 11.1];
+        const labels = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'غشت', 'شتنبر', 'أكتوبر', 'نونبر', 'دجنبر'];
+        
+        // --- 1. ملء جدول المعطيات ---
+        const tableBody = document.getElementById('dataTableBody');
+        tableBody.innerHTML = ''; // إفراغ الجدول
+        labels.forEach((month, index) => {
+            const row = `<tr>
+                <td>${month}</td>
+                <td>${temperature[index]}</td>
+                <td>${precipitation[index]}</td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+
+        // --- 2. حساب وعرض المدى الحراري ---
+        const minTemp = Math.min(...temperature);
+        const maxTemp = Math.max(...temperature);
+        const tempRange = (maxTemp - minTemp).toFixed(1); // تقريب
+
+        document.getElementById('minTemp').textContent = minTemp;
+        document.getElementById('maxTemp').textContent = maxTemp;
+        document.getElementById('tempRange').textContent = tempRange;
+
+        // --- 3. إنشاء المبيان ---
+        const ctx = document.getElementById('climographChart').getContext('2d');
+        let climographChart = new Chart(ctx, {
+            type: 'bar', 
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: 'التساقطات (مم)',
+                        data: precipitation, // بيانات فاس
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                        yAxisID: 'yPrecip', // الربط بالمحور الأيسر
+                    },
+                    {
+                        type: 'line',
+                        label: 'الحرارة (°م)',
+                        data: temperature, // بيانات فاس
+                        backgroundColor: 'rgba(255, 99, 132, 0.4)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.3,
+                        yAxisID: 'yTemp', // الربط بالمحور الأيمن
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                        pointBorderColor: '#fff'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                resizeDelay: 0,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: `المبيان المناخي لمدينة ${cityName}`,
+                        font: { size: 20, family: 'Segoe UI', weight: 'bold' },
+                        color: '#0056b3'
+                    },
+                    tooltip: { mode: 'index', intersect: false, rtl: true },
+                    legend: { labels: { font: { size: 14 } }, rtl: true }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'الشهور', font: { size: 14 } },
+                        ticks: { font: { size: 12 } },
+                        grid: { display: false }
+                    },
+                    // المحور الأيسر (تساقطات)
+                    yPrecip: {
+                        type: 'linear',
+                        position: 'left', 
+                        title: {
+                            display: true,
+                            text: 'التساقطات (مم)',
+                            color: 'rgba(54, 162, 235, 1)',
+                            font: { size: 14 }
+                        },
+                        ticks: { callback: function(value) { return value + ' مم'; }, font: { size: 12 } },
+                        min: 0,
+                        max: 80, // تعديل الحد الأقصى (أعلى قيمة هي 75)
+                        grid: { drawOnChartArea: true, color: '#e9ecef' }
+                    },
+                    // المحور الأيمن (حرارة)
+                    yTemp: {
+                        type: 'linear',
+                        position: 'right', 
+                        title: {
+                            display: true,
+                            text: 'الحرارة (°م)',
+                            color: 'rgba(255, 99, 132, 1)',
+                            font: { size: 14 }
+                        },
+                        ticks: { callback: function(value) { return value + '°م'; }, font: { size: 12 } },
+                        min: 0,
+                        max: 40, // نصف التساقطات (80 / 2 = 40)
+                        grid: { drawOnChartArea: false },
+                    }
+                }
+            }
+        });
+
+    </script>
+
+</body>
+</html>

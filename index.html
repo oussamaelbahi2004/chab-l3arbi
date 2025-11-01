@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تمرين أستاذ الاجتماعيات: مناطق ذات مناخ متوسطي بمبيان حراري</title>
+    <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lettering.js/0.7.0/jquery.lettering.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        /* Animation Title Styles */
+        .animation-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #405166 0%, #656f6f 100%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .animation-container {
+            position: relative;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+        .animation-title {
+            color: #fff;
+            text-transform: uppercase;
+            font-family: 'Fjalla One', sans-serif;
+            font-size: 42px;
+            margin: 0;
+            line-height: 60px;
+            letter-spacing: 2px;
+        }
+        .title-line {
+            transform: translateX(-50%) rotate(-10deg);
+            display: block;
+            float: left;
+            left: 50%;
+            position: relative;
+            margin-bottom: 10px;
+            clear: both;
+        }
+        .title-line span {
+            transform: skew(-10deg);
+            display: block;
+            float: left;
+            text-shadow: #533d4a 1px 1px, #533d4a 2px 2px, #533d4a 3px 3px, #533d4a 4px 4px, #533d4a 5px 5px, #533d4a 6px 6px;
+            min-width: 10px;
+            min-height: 10px;
+            position: relative;
+        }
+        .title-line:nth-child(1) {
+            color: #e55643;
+        }
+        .title-line:nth-child(2) {
+            color: #2b9f5e;
+        }
+        .title-line:nth-child(3) {
+            color: #f1c83c;
+        }
+        .main-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .main-content.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #343a40;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            width: 900px;
+            max-width: 95%;
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            direction: rtl;
+            text-align: right;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+        .regions-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .regions-list li {
+            margin-bottom: 20px;
+        }
+        .region-link {
+            display: block;
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-size: 18px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .region-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        .region-link:active {
+            transform: translateY(-1px);
+        }
+        .description {
+            text-align: center;
+            color: #495057;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .description p {
+            margin: 10px 0;
+        }
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                width: 100%;
+            }
+            h1 {
+                font-size: 22px;
+                margin-bottom: 8px;
+            }
+            .subtitle {
+                font-size: 14px;
+                margin-bottom: 25px;
+            }
+            .regions-list li {
+                margin-bottom: 15px;
+            }
+            .region-link {
+                padding: 15px 20px;
+                font-size: 16px;
+            }
+            .description {
+                margin-top: 20px;
+                padding-top: 20px;
+                font-size: 14px;
+            }
+        }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 18px;
+            }
+            .subtitle {
+                font-size: 13px;
+            }
+            .region-link {
+                padding: 12px 15px;
+                font-size: 15px;
+            }
+            .description {
+                font-size: 13px;
+            }
+        }
+        @media (max-width: 768px) {
+            .animation-title {
+                font-size: 32px;
+                line-height: 45px;
+            }
+        }
+        @media (max-width: 480px) {
+            .animation-title {
+                font-size: 24px;
+                line-height: 35px;
+                letter-spacing: 1px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animation Section -->
+    <section class="animation-section" id="animationSection">
+        <div class="animation-container">
+            <h1 class="animation-title">
+                <span class="title-line">chab l3arbi</span>
+                <span class="title-line">made this</span>
+                <span class="title-line">shit</span>
+            </h1>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+    <div class="container">
+        <h1>تمرين أستاذ الاجتماعيات: مناطق ذات مناخ متوسطي بمبيان حراري</h1>
+        <p class="subtitle">اختر المدينة لعرض المبيان المناخي الخاص بها</p>
+
+        <ul class="regions-list">
+            <li>
+                <a href="رباط.html" class="region-link">الرباط</a>
+            </li>
+            <li>
+                <a href="طنجة.html" class="region-link">طنجة</a>
+            </li>
+            <li>
+                <a href="الدار البيضاء.html" class="region-link">الدار البيضاء</a>
+            </li>
+            <li>
+                <a href="تطوان.html" class="region-link">تطوان</a>
+            </li>
+            <li>
+                <a href="الحسيمة.html" class="region-link">الحسيمة</a>
+            </li>
+            <li>
+                <a href="الناضور.html" class="region-link">الناظور</a>
+            </li>
+            <li>
+                <a href="شفشاون.html" class="region-link">شفشاون</a>
+            </li>
+            <li>
+                <a href="وجدة.html" class="region-link">وجدة</a>
+            </li>
+            <li>
+                <a href="فاس.html" class="region-link">فاس</a>
+            </li>
+            <li>
+                <a href="العرائش.html" class="region-link">العرائش</a>
+            </li>
+        </ul>
+
+        <div class="description">
+            <p><strong>عن هذا التمرين:</strong></p>
+            <p>هذا تمرين في مادة الاجتماعيات يهدف إلى دراسة المناخ المتوسطي في مناطق مختلفة من المغرب من خلال تحليل المبيان الحراري (الكليموغراف).</p>
+            <p>كل منطقة تمثل نموذجاً للمناخ المتوسطي مع بيانات دقيقة عن درجات الحرارة والتساقطات الشهرية.</p>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize lettering for animation
+            $(".title-line").lettering();
+            
+            // Start animation after a short delay
+            setTimeout(function() {
+                animateTitle();
+            }, 300);
+        });
+
+        function animateTitle() {
+            var timeline = gsap.timeline();
+            
+            // Animate each letter in each line
+            timeline.staggerFromTo(".title-line span", 0.5, 
+                {
+                    ease: "back.out(1.7)",
+                    opacity: 0,
+                    y: -80,
+                    rotation: -10
+                },
+                {
+                    ease: "back.out(1.7)",
+                    opacity: 1,
+                    y: 0,
+                    rotation: -10
+                },
+                0.05
+            );
+            
+            // Hide animation section and show main content
+            timeline.to("#animationSection", 0.5, {
+                opacity: 0,
+                ease: "power2.inOut"
+            });
+            
+            timeline.set("#animationSection", {
+                display: "none"
+            });
+            
+            timeline.to("#mainContent", 0.5, {
+                opacity: 1,
+                visibility: "visible",
+                ease: "power2.inOut"
+            }, "-=0.3");
+        }
+    </script>
+
+</body>
+</html>
+
